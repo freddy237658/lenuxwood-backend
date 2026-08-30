@@ -12,8 +12,14 @@ use App\Http\Controllers\Api\TeamMemberController;
 use App\Http\Controllers\Api\RealisationController;
 use App\Http\Controllers\Api\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Api\Admin\DashboardController;
+use App\Http\Controllers\Api\AssistantController;
 
 use Illuminate\Support\Facades\Route;
+
+
+
+Route::post('/assistant/chat', [AssistantController::class, 'chat'])
+    ->middleware('throttle:20,1');
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -27,6 +33,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
+    Route::put('/me/profile', [AuthController::class, 'updateProfile']);
 });
 
 
@@ -63,6 +70,7 @@ Route::post('/quotes', [QuoteController::class, 'store']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me/quotes', [QuoteController::class, 'myQuotes']);
+    
 });
 
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {
