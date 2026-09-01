@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\PageView;
 use App\Models\Payment;
 use App\Models\Product;
 use App\Models\Quote;
@@ -33,6 +34,9 @@ class DashboardController extends Controller
                 ->whereYear('created_at', now()->year)
                 ->sum('amount'),
             'weekly_revenue_trend' => $weeklyRevenue,
+            'visits_this_month' => PageView::whereMonth('created_at', now()->month)
+                ->whereYear('created_at', now()->year)
+                ->count(),
             'latest_quotes' => Quote::with('category')->latest()->take(4)->get()->map(fn ($q) => [
                 'id' => $q->id,
                 'name' => $q->name,
@@ -40,9 +44,9 @@ class DashboardController extends Controller
                 'city' => $q->city,
                 'status' => $q->status,
             ]),
-            'latest_orders' => Order::with('product', 'user')->latest()->take(4)->get()->map(fn ($o) => [
+            'latest_orders' => Order::with('items.product', 'user')->latest()->take(4)->get()->map(fn ($o) => [
                 'id' => $o->id,
-                'product' => $o->product->name,
+                'product' => $o->items->first()?->product?->name ?? 'Plusieurs produits',
                 'client' => $o->user->name,
                 'amount' => (float) $o->amount,
                 'status' => $o->status,

@@ -19,7 +19,15 @@ class OrderResource extends JsonResource
                 'delivered' => 'Livré',
                 default => $this->status,
             },
-            'product' => new ProductResource($this->whenLoaded('product')),
+            'items' => $this->whenLoaded('items', function () {
+                return $this->items->map(fn ($item) => [
+                    'product_id' => $item->product_id,
+                    'product_name' => $item->product->name,
+                    'quantity' => $item->quantity,
+                    'unit_price' => (float) $item->unit_price,
+                    'subtotal' => (float) $item->unit_price * $item->quantity,
+                ]);
+            }),
             'user' => $this->whenLoaded('user', fn () => [
                 'id' => $this->user->id,
                 'name' => $this->user->name,

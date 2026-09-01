@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Notifications\WelcomeNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -25,6 +26,8 @@ class AuthController extends Controller
             'password' => Hash::make($validated['password']),
             'role' => 'client',
         ]);
+
+        $user->notify(new WelcomeNotification());
 
         $token = $user->createToken('web')->plainTextToken;
 

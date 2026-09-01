@@ -5,7 +5,12 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\QuoteResource;
 use App\Models\Quote;
+use App\Models\User;
+use App\Notifications\NewQuoteAdminAlert;
+use App\Notifications\QuoteReceived;
+use App\Notifications\QuoteStatusUpdated;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 
 class QuoteController extends Controller
 {
@@ -31,8 +36,16 @@ class QuoteController extends Controller
         }
 
         $quote = Quote::create($validated);
+        $quote->load('category');
 
-        return new QuoteResource($quote->load('category'));
+        if ($quote->email) {
+            Notification::route('mail', $quote->email)->notify(new QuoteReceived($quote));
+        }
+
+        $admins = User::where('role', 'admin')->get();
+        Notification::send($admins, new NewQuoteAdminAlert($quote));
+
+        return new QuoteResource($quote);
     }
 
     public function myQuotes(Request $request)
@@ -49,8 +62,8 @@ class QuoteController extends Controller
     {
         $query = Quote::query()->with(['category', 'user']);
 
-        if ($request->filled('status') && $request->string('status') !== 'Tous') {
-            $query->where('status', $request->string('status'));
+        if ($request->filled('status') && $request->input('status') !== 'Tous') {
+            $query->where('status', $request->input('status'));
         }
 
         if ($request->filled('q')) {
@@ -76,8 +89,15 @@ class QuoteController extends Controller
         ]);
 
         $quote->update($validated);
+        $quote->load('category', 'user');
 
-        return new QuoteResource($quote->load('category'));
+        if ($quote->email) {
+            Notification::route('mail', $quote->email)->notify(new QuoteStatusUpdated($quote));
+        } elseif ($quote->user) {
+            $quote->user->notify(new QuoteStatusUpdated($quote));
+        }
+
+        return new QuoteResource($quote);
     }
 
     public function destroy(Quote $quote)

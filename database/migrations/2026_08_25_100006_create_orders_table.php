@@ -11,7 +11,6 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
             $table->foreignId('quote_id')->nullable()->constrained()->nullOnDelete();
             $table->decimal('amount', 12, 2);
             $table->enum('status', ['quote_validated', 'in_production', 'delivered'])->default('quote_validated');

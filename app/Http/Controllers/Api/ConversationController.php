@@ -48,6 +48,10 @@ class ConversationController extends Controller
             ['context' => 'Support LenuxWood']
         );
 
+        $conversation->loadCount(['messages as unread_count' => function ($q) use ($request) {
+            $q->whereNull('read_at')->where('sender_id', '!=', $request->user()->id);
+        }]);
+
         return new ConversationResource($conversation->load('user'));
     }
 
