@@ -11,7 +11,7 @@ return [
      'http://localhost:5174',
         'http://localhost:5175',// front en développement local
         'https://lenuxwood-frontend.vercel.app', 
-           'https://lenuxwood.com',
+        'https://www.lenuxwood.com',
         'https://lenuxwood.com',// TODO: remplacer par ton vrai domaine Vercel
     ],
 
