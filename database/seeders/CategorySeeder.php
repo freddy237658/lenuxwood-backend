@@ -11,14 +11,6 @@ class CategorySeeder extends Seeder
     {
         $categories = [
             [
-                'slug' => 'charpente',
-                'name_fr' => 'Charpente',
-                'name_en' => 'Roofing',
-                'description_fr' => 'Structures de toiture robustes, calculées pour durer sous toutes les saisons.',
-                'description_en' => 'Sturdy roof structures, engineered to last through every season.',
-                'icon' => 'truss',
-            ],
-            [
                 'slug' => 'meubles-cuisine',
                 'name_fr' => 'Meubles de cuisine',
                 'name_en' => 'Kitchen furniture',
@@ -26,6 +18,7 @@ class CategorySeeder extends Seeder
                 'description_en' => 'Custom kitchens, designed for everyday use and style.',
                 'icon' => 'kitchen',
             ],
+
             [
                 'slug' => 'meubles-salon',
                 'name_fr' => 'Meubles de salon',
@@ -73,6 +66,14 @@ class CategorySeeder extends Seeder
                 'description_fr' => 'Rangements optimisés, adaptés à chaque pièce de la maison.',
                 'description_en' => 'Optimised storage, tailored to every room in the house.',
                 'icon' => 'wardrobe',
+            ],
+            [
+                'slug' => 'charpente',
+                'name_fr' => 'Charpente',
+                'name_en' => 'Roofing',
+                'description_fr' => 'Structures de toiture robustes, calculées pour durer sous toutes les saisons.',
+                'description_en' => 'Sturdy roof structures, engineered to last through every season.',
+                'icon' => 'truss',
             ],
         ];
 

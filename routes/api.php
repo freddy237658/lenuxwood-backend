@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\RealisationController;
 use App\Http\Controllers\Api\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Api\Admin\DashboardController;
 use App\Http\Controllers\Api\AssistantController;
+use App\Http\Controllers\Api\ContactController;
 
 use App\Http\Controllers\Api\TrackingController;
 use Illuminate\Support\Facades\Route;
@@ -40,9 +41,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
 
-
 Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function () {
     Route::get('/stats', [DashboardController::class, 'stats']);
+        Route::patch('/payments/{payment}', [PaymentController::class, 'updateStatus']);
 
     Route::get('/users', [AdminUserController::class, 'index']);
     Route::post('/users', [AdminUserController::class, 'store']);
@@ -82,6 +83,15 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::delete('/quotes/{quote}', [QuoteController::class, 'destroy']);
 });
 
+
+
+Route::post('/contact', [ContactController::class, 'store'])->middleware('throttle:10,1');
+
+Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+    Route::get('/contacts', [ContactController::class, 'index']);
+    Route::get('/contacts/{contact}', [ContactController::class, 'show']);
+    Route::delete('/contacts/{contact}', [ContactController::class, 'destroy']);
+});
 
 
 

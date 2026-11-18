@@ -23,6 +23,10 @@ class TeamMemberController extends Controller
             'role' => ['required', 'string', 'max:255'],
             'display_order' => ['nullable', 'integer', 'min:0'],
             'photo' => ['nullable', 'image', 'max:4096'],
+            'facebook_url' => ['nullable', 'url', 'max:255'],
+            'tiktok_url' => ['nullable', 'url', 'max:255'],
+            'linkedin_url' => ['nullable', 'url', 'max:255'],
+            'x_url' => ['nullable', 'url', 'max:255'],
         ]);
 
         if ($request->hasFile('photo')) {
@@ -41,6 +45,10 @@ class TeamMemberController extends Controller
             'role' => ['required', 'string', 'max:255'],
             'display_order' => ['nullable', 'integer', 'min:0'],
             'photo' => ['nullable', 'image', 'max:4096'],
+            'facebook_url' => ['nullable', 'url', 'max:255'],
+            'tiktok_url' => ['nullable', 'url', 'max:255'],
+            'linkedin_url' => ['nullable', 'url', 'max:255'],
+            'x_url' => ['nullable', 'url', 'max:255'],
         ]);
 
         if ($request->hasFile('photo')) {

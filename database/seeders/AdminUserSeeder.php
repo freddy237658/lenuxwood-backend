@@ -10,14 +10,13 @@ class AdminUserSeeder extends Seeder
 {
     public function run(): void
     {
-        // ⚠️ Change ce mot de passe juste après le premier déploiement.
         User::updateOrCreate(
-            ['email' => 'admin@lenuxwood.com'],
+            ['email' => env('ADMIN_EMAIL', 'lenuxwoodadmin35@gmail.com')],
             [
-                'name' => 'Admin LenuxWood',
-                'phone' => '+237600000000',
-                'password' => Hash::make('changeme123'),
+                'name' => 'Admin Lenuxwood',
+                'phone' => '+237697647799',
                 'role' => 'admin',
+                'password' => Hash::make(env('ADMIN_PASSWORD', 'Malik8569@@')),
                 'email_verified_at' => now(),
             ]
         );

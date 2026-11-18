@@ -11,5 +11,9 @@ class TeamMember extends Model
         'role',
         'photo_path',
         'display_order',
+        'facebook_url',
+        'tiktok_url',
+        'linkedin_url',
+        'x_url',
     ];
 }

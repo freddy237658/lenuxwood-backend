@@ -28,7 +28,7 @@ class QuoteController extends Controller
             'attachment' => ['nullable', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
         ]);
 
-        $validated['user_id'] = $request->user()?->id;
+              $validated['user_id'] = $request->user('sanctum')?->id;
         $validated['status'] = 'pending';
 
         if ($request->hasFile('attachment')) {

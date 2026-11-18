@@ -14,10 +14,14 @@ class TeamMemberResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'role' => $this->role,
-            'photo_url' => $this->photo_path
-                ? Storage::disk('public')->url($this->photo_path)
-                : null,
+            'photo_url' => $this->photo_path ? Storage::disk('public')->url($this->photo_path) : null,
             'display_order' => $this->display_order,
+            'social' => [
+                'facebook' => $this->facebook_url,
+                'tiktok' => $this->tiktok_url,
+                'linkedin' => $this->linkedin_url,
+                'x' => $this->x_url,
+            ],
         ];
     }
 }

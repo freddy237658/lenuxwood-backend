@@ -15,18 +15,14 @@ class PaymentController extends Controller
      * Initie un paiement pour une commande.
      *
      * ⚠️ Ceci crée uniquement l'enregistrement en base avec le statut
-     * "pending". L'appel réel vers l'API Orange Money / MTN MoMo (qui
-     * renvoie une URL de paiement ou déclenche une invite USSD sur le
-     * téléphone du client) devra être ajouté ici une fois que tu auras
-     * les identifiants marchand des deux opérateurs :
-     *   - Orange Money : https://developer.orange.com/apis/om-webpay
-     *   - MTN MoMo      : https://momodeveloper.mtn.com
+     * "pending". L'appel réel vers l'API Orange Money / MTN MoMo devra
+     * être ajouté ici une fois que tu auras les identifiants marchand.
      */
     public function store(Request $request)
     {
         $validated = $request->validate([
             'order_id' => ['required', 'exists:orders,id'],
-            'method' => ['required', 'in:orange_money,mtn_momo'],
+            'method' => ['required', 'in:orange_money,mtn_momo,cash_on_delivery'],
             'amount' => ['required', 'numeric', 'min:0'],
         ]);
 
@@ -39,9 +35,6 @@ class PaymentController extends Controller
             'transaction_ref' => (string) Str::uuid(),
             'status' => 'pending',
         ]);
-
-        // TODO: appeler ici l'API du fournisseur avec $payment->transaction_ref
-        // comme référence, puis renvoyer l'URL/code retourné par l'opérateur.
 
         return new PaymentResource($payment);
     }
@@ -58,17 +51,29 @@ class PaymentController extends Controller
 
     public function index()
     {
-        $payments = Payment::with('order.product', 'order.user')->latest()->paginate(15);
+        $payments = Payment::with('order.items.product', 'order.user')->latest()->paginate(15);
 
         return PaymentResource::collection($payments);
     }
 
-    /**
-     * Webhook appelé par Orange Money / MTN MoMo pour confirmer le paiement.
-     * La structure exacte (noms des champs, signature de sécurité à
-     * vérifier) dépend du fournisseur ; à adapter à leur documentation
-     * au moment de l'intégration réelle.
-     */
+    // Confirmation manuelle (en attendant l'intégration réelle des webhooks
+    // Orange Money / MTN MoMo) : passe le paiement en "confirmé" ou "échoué",
+    // et fait avancer la commande liée en "En fabrication" si confirmé.
+    public function updateStatus(Request $request, Payment $payment)
+    {
+        $validated = $request->validate([
+            'status' => ['required', 'in:pending,confirmed,failed'],
+        ]);
+
+        $payment->update($validated);
+
+        if ($validated['status'] === 'confirmed') {
+            $payment->order->update(['status' => 'in_production']);
+        }
+
+        return new PaymentResource($payment->load('order'));
+    }
+
     public function webhook(Request $request)
     {
         $validated = $request->validate([
